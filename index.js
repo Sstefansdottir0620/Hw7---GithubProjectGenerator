@@ -11,10 +11,10 @@ const writeFileAsync = util.promisify(fs.writeFile);
 
 
 const questions = [
-    {
-type:"input",
-name: "name",
-message: "What is your name?"
+{
+    type:"input",
+    name: "name",
+    message: "What is your name?"
 
 },
 {
@@ -50,7 +50,7 @@ message: "What is your name?"
 {
     type: "input",
     name: "tableOfContents",
-    message: "What is your table of contents?"
+    message: "What is the table of contents?"
 },
 {
     type: "input",
@@ -60,7 +60,7 @@ message: "What is your name?"
 {
     type: "input",
     name: "license",
-    message: "License?"
+    message: "What is the license for your project?"
 },
 {
     type: "input",
@@ -72,17 +72,10 @@ message: "What is your name?"
     name: "installation",
     message: "What was installed for the project?"
 },
-{
-    type: "input",
-    name: "questions",
-    message: "Do you have questions?"
-},
-
-
 ];
 
 var data;
-
+//this is the function that prompts the user to answer questions that will be generated to the Readme
 inquirer.prompt(questions)
 .then(answers => {
     axios.get(`https://api.github.com/users/${answers.username}`)
@@ -91,9 +84,9 @@ inquirer.prompt(questions)
         # Github User Name: ${answers.username}
         # Github email address: ${answers.email}
         # Bio Image: ${data.avatar_url}
+        # Repo URL: ${data.repos_url}
         # Bio: ${answers.bio}
         # Repo name: ${answers.repoName}
-        # Repo URL: ${data.repos_url}
         # Table of Contents: ${answers.tableOfcontents}
         # Usage: ${answers.usage}
         # License: ${answers.license}
