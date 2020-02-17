@@ -87,7 +87,7 @@ inquirer.prompt(questions)
 .then(answers => {
     axios.get(`https://api.github.com/users/${answers.username}`)
     .then(data => {
-        writeFileAsync("README.txt",`# Name: ${answers.name}
+        writeFileAsync("README.md",`# Name: ${answers.name}
         # Github User Name: ${answers.username}
         # Github email address: ${answers.email}
         # Bio Image: ${data.avatar_url}
