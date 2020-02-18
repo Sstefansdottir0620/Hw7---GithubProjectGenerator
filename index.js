@@ -1,6 +1,3 @@
-
-
-
 const fs = require("fs");
 const axios = require("axios");
 const inquirer = require("inquirer");
@@ -22,18 +19,6 @@ const questions = [
     name: "username",
     message: "Enter your GitHub username"
     
-},
-{
-    type:"input",
-    name: "email",
-    message: "Enter your GitHub e-mail address"
-        
-},
-{
-    type:"input",
-    name: "bio",
-    message: "What is your bio?"        
-            
 },
 {
     type:"input",
@@ -74,32 +59,53 @@ const questions = [
 },
 ];
 
-var data;
 //this is the function that prompts the user to answer questions that will be generated to the Readme
 inquirer.prompt(questions)
 .then(answers => {
+    var userEmail;
     axios.get(`https://api.github.com/users/${answers.username}`)
-    .then(data => {
-        writeFileAsync("README.md",`# Name: ${answers.name}
-        # Github User Name: ${answers.username}
-        # Github email address: ${answers.email}
-        # Bio Image: ${data.avatar_url}
-        # Repo URL: ${data.repos_url}
-        # Bio: ${answers.bio}
-        # Repo name: ${answers.repoName}
-        # Table of Contents: ${answers.tableOfcontents}
-        # Usage: ${answers.usage}
-        # License: ${answers.license}
-        # Contributing: ${answers.contributing}
-        # Installation: ${answers.installation}
-        # Contributing: ${answers.questions}
-        
-        
-        `)
-    
+    .then(res=> {
+
+    var eventsUrl = res.data.events_url;
+    if (eventsUrl.indexOf("{/privacy}") > -1) {
+        eventsUrl = eventsUrl.substring(0, eventsUrl.indexOf("{/privacy}"));
+    }
+    axios
+    .get(eventsUrl)
+    .then(resEmail => {
+        userEmail = resEmail.data[0].payload.commits[0].author.email;
+    });
+
+    var repoName;
+    axios.get(res.data.repos_url)
+    .then(repos => { 
+        repos.data.forEach(repo => {
+            if (repo.id === 241012274) {
+                repoName = repo.name;  
+            }
+            
+        });
+
+    })
+
+    writeFileAsync("README.md",`# Name: ${answers.name}
+    # Github User Name: ${answers.username}
+    # Github email address: ${userEmail}
+    # Bio Image: ${res.data.avatar_url}
+    # Repo URL: ${res.data.repos_url}
+    # Bio: ${answers.bio}
+    # Repo name: ${repoName}
+    # Table of Contents: ${answers.tableOfcontents}
+    # Usage: ${answers.usage}
+    # License: ${answers.license}
+    # Contributing: ${answers.contributing}
+    # Installation: ${answers.installation}
+    # Contributing: ${answers.questions}`)
     
     
     })
 
     
 });
+
+
